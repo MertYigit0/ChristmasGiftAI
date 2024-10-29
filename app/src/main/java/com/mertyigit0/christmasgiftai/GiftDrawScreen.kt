@@ -10,31 +10,33 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.LaunchedEffect
+import androidx.lifecycle.viewmodel.compose.viewModel
+
 
 @Composable
-fun GiftDrawScreen(participants: List<String>) {
-    var currentIndex by remember { mutableStateOf(0) }
-    val pairs = remember { generateGiftPairs(participants) }
-    var showEnvelope by remember { mutableStateOf(true) }
+fun GiftDrawScreen(
+    participants: List<String>,
+    viewModel: GiftDrawViewModel = viewModel()
+) {
+    // participants listesini ViewModel’e ilk kez aktar
+    LaunchedEffect(participants) {
+        viewModel.setParticipants(participants)
+    }
+
+    val currentPerson = viewModel.currentPerson
+    val giftee = viewModel.giftee
+    val showEnvelope = viewModel.showEnvelope
+    val currentIndex = viewModel.currentIndex
 
     if (currentIndex < participants.size) {
-        val currentPerson = participants[currentIndex]
-        val giftee = pairs[currentPerson]
-
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -44,7 +46,6 @@ fun GiftDrawScreen(participants: List<String>) {
         ) {
             Text(
                 text = "$currentPerson'in hediye alacağı kişi...",
-                //style = MaterialTheme.typography.h5,
                 modifier = Modifier.padding(bottom = 16.dp)
             )
 
@@ -55,53 +56,31 @@ fun GiftDrawScreen(participants: List<String>) {
                     contentDescription = "Kapalı Zarf",
                     modifier = Modifier
                         .size(150.dp)
-                        .clickable { showEnvelope = false }
+                        .clickable { viewModel.toggleEnvelope() }
                 )
             } else {
                 // Açık Zarf - Hediyeyi Alacak Kişi
-                if (giftee != null) {
-                    Text(
-                        text = giftee,
-                        // style = MaterialTheme.typography.h4,
-                        modifier = Modifier.padding(16.dp)
-                    )
-                }
+                Text(
+                    text = giftee,
+                    modifier = Modifier.padding(16.dp)
+                )
             }
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            Button(onClick = {
-                showEnvelope = true
-                currentIndex++
-            }) {
+            Button(onClick = { viewModel.goToNext() }) {
                 Text(text = if (currentIndex < participants.size - 1) "Sonraki" else "Tamamla")
             }
         }
     } else {
         Text(
             text = "Çekiliş Tamamlandı!",
-            //style = MaterialTheme.typography.h4,
             modifier = Modifier
                 .fillMaxSize()
                 .padding(16.dp),
             textAlign = TextAlign.Center
         )
     }
-}
-
-
-fun generateGiftPairs(participants: List<String>): Map<String, String> {
-    require(participants.size >= 2) { "Eşleştirme yapmak için en az 2 kişi olmalı" }
-
-    var shuffled: List<String>
-    var pairs: Map<String, String>
-
-    do {
-        shuffled = participants.shuffled()
-        pairs = participants.zip(shuffled).toMap()
-    } while (pairs.any { (giver, receiver) -> giver == receiver })
-
-    return pairs
 }
 
 

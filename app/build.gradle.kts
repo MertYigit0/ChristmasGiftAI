@@ -63,6 +63,8 @@ dependencies {
 
     // Jetpack Compose integration
     implementation(libs.androidx.navigation.compose)
+    implementation ("androidx.compose.material3:material3:$1.3.0")
+
 
 
 
