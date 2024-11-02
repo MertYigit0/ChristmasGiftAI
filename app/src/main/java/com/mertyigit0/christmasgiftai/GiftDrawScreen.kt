@@ -12,14 +12,15 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
-
 
 @Composable
 fun GiftDrawScreen(
@@ -35,8 +36,9 @@ fun GiftDrawScreen(
     val giftee = viewModel.giftee
     val showEnvelope = viewModel.showEnvelope
     val currentIndex = viewModel.currentIndex
+    val isDrawComplete = viewModel.isDrawComplete  // Tamamlandı durumu
 
-    if (currentIndex < participants.size) {
+    if (!isDrawComplete && currentIndex < participants.size) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -68,19 +70,46 @@ fun GiftDrawScreen(
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            Button(onClick = { viewModel.goToNext() }) {
+            Button(onClick = {
+                if (currentIndex < participants.size - 1) {
+                    viewModel.goToNext()
+                } else {
+                    // Çekiliş tamamlandı. Burada state'i değiştirin.
+                    viewModel.completeDraw()
+                }
+            }) {
                 Text(text = if (currentIndex < participants.size - 1) "Sonraki" else "Tamamla")
             }
         }
-    } else {
-        Text(
-            text = "Çekiliş Tamamlandı!",
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp),
-            textAlign = TextAlign.Center
-        )
+    } else if (isDrawComplete) {
+        // Çekiliş tamamlandı mesajı
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            Text(
+                text = "Çekiliş Tamamlandı! Mutlu Noeller! Eger hediye tavsiyesi istiyorsan Yapay Zekadan yardim alabilirsin :)",
+                modifier = Modifier.padding(16.dp),
+                textAlign = TextAlign.Center
+            )
+
+            // Ana ekrana dönmek için bir buton
+            Button(onClick = {
+                // Ana ekrana dönmek için gerekli işlemi yapın
+            }) {
+                Text("Tamamla")
+            }
+        }
     }
 }
 
+@Preview(showBackground = true)
+@Composable
+fun GiftDrawScreenPreview() {
+    // Örnek katılımcılar
+    val sampleParticipants = listOf("Mert", "Ayşe", "Can", "Kemal")
 
+    // Önizleme için fonksiyonu çağırıyoruz
+    GiftDrawScreen(participants = sampleParticipants)
+}

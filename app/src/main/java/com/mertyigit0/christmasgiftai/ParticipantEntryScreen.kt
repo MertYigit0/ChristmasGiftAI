@@ -6,10 +6,13 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.compose.rememberNavController
 
+@Preview(showBackground = true)
 @Composable
 fun ParticipantEntryScreen(navController: NavController) {
     val viewModel: ParticipantEntryViewModel = viewModel()
@@ -65,6 +68,7 @@ fun ParticipantEntryScreen(navController: NavController) {
                     val names = viewModel.participantNames.filter { it.isNotBlank() }
                     if (viewModel.canStartDraw()) {
                         navController.navigate("giftDraw/${names.joinToString(",")}")
+
                     }
                 },
                 enabled = viewModel.canStartDraw()
@@ -73,4 +77,15 @@ fun ParticipantEntryScreen(navController: NavController) {
             }
         }
     }
+}
+
+
+// Örnek bir önizleme fonksiyonu
+@Preview(showBackground = true)
+@Composable
+fun ParticipantEntryScreenPreview() {
+    // Önizleme için bir NavController oluşturuyoruz. Burada gerçek bir NavController kullanılmadığı için
+    // dummy bir kontekst oluşturabilirsiniz.
+    val dummyNavController = rememberNavController()
+    ParticipantEntryScreen(navController = dummyNavController)
 }

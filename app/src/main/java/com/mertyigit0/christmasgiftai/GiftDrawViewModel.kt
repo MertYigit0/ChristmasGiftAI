@@ -10,11 +10,14 @@ class GiftDrawViewModel : ViewModel() {
     private var participants = listOf<String>()
     private var pairs = mapOf<String, String>()
 
-    // ViewState variables
+    // ViewState değişkenleri
     var currentIndex by mutableStateOf(0)
         private set
 
     var showEnvelope by mutableStateOf(true)
+        private set
+
+    var isDrawComplete by mutableStateOf(false)  // Yeni değişken
         private set
 
     val currentPerson: String
@@ -29,6 +32,12 @@ class GiftDrawViewModel : ViewModel() {
         pairs = generateGiftPairs(participants)
         currentIndex = 0
         showEnvelope = true
+        isDrawComplete = false  // Başlangıçta tamamlanmadı
+    }
+
+    // Çekilişi tamamlama fonksiyonu
+    fun completeDraw() {
+        isDrawComplete = true
     }
 
     // Actions
@@ -58,3 +67,4 @@ class GiftDrawViewModel : ViewModel() {
         return pairs
     }
 }
+

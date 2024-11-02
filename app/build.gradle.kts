@@ -39,6 +39,10 @@ android {
         compose = true
         buildConfig = true
     }
+    composeOptions {
+        kotlinCompilerExtensionVersion = "1.5.15"
+    }
+
 }
 
 dependencies {
@@ -64,6 +68,7 @@ dependencies {
     // Jetpack Compose integration
     implementation(libs.androidx.navigation.compose)
     implementation ("androidx.compose.material3:material3:$1.3.0")
+    implementation(libs.androidx.material)
 
 
 

@@ -24,7 +24,7 @@ fun ChristmasApp() {
         ) { backStackEntry ->
             val participantsString = backStackEntry.arguments?.getString("participants")
             val participants = participantsString?.split(",") ?: emptyList()
-            GiftDrawScreen(participants = participants)
+           // GiftDrawScreen(participants = participants)
         }
     }
 }
